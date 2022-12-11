@@ -18,7 +18,7 @@ extension IconFunctionExtensions on IconFunction {
     if (isHoverIcon) {
       return DropdownButtonIconTrigger.hover;
     } else if (isTapIcon) {
-      return DropdownButtonIconTrigger.click;
+      return DropdownButtonIconTrigger.tap;
     }
   }
 }

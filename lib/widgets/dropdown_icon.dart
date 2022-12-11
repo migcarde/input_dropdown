@@ -1,12 +1,12 @@
 import 'package:flutter/widgets.dart';
 
 enum DropdownButtonIconTrigger {
-  click,
+  tap,
   hover,
 }
 
 extension DropdownButtonIconTriggerExtensions on DropdownButtonIconTrigger {
-  get isClick => this == DropdownButtonIconTrigger.click;
+  get isTap => this == DropdownButtonIconTrigger.tap;
   get isHover => this == DropdownButtonIconTrigger.hover;
 }
 
@@ -39,7 +39,7 @@ class _DropdownIconState extends State<DropdownIcon> {
           ? _updateButton(isTriggered: true)
           : null,
       child: GestureDetector(
-        onTap: () => widget.functionTrigger.isClick
+        onTap: () => widget.functionTrigger.isTap
             ? _updateButton(isTriggered: !isTriggered)
             : null,
         child: widget.icon,
