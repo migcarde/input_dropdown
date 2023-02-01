@@ -19,17 +19,19 @@ Input dropdown is a simple flutter package that provides a simple way to create 
 2. Allow input and dropdown customization.
 3. Adapt widget for desktop and mobile platforms.
 
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+To use this package, aadd input_dropdown as a [dependency in your pubspec.yaml file.](https://plus.fluttercommunity.dev/docs/overview/)
+
+The developer need to know that input dropdown is a [Expanded widget](https://api.flutter.dev/flutter/widgets/Expanded-class.html), for this reason, input dropdown always take maximum width and height available of his parent. Also, input dropdown does not have any style by itself, in the first example below we can se that the box style is provided by the [Container parent widget](https://api.flutter.dev/flutter/widgets/Container-class.html).
+
+### Example
 
 ```dart
+// Import package
+import 'package:input_dropdown/input_dropdown.dart';
+
+
 const like = 'sample';
 ```
 
