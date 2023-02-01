@@ -6,6 +6,7 @@ import 'package:input_dropdown/common/enums/icon_function.dart';
 import 'package:input_dropdown/common/enums/icon_position.dart';
 import 'package:input_dropdown/widgets/dropdown_icon.dart';
 import 'package:input_dropdown/widgets/dropdown_overlay.dart';
+import 'package:input_dropdown/widgets/models/dropdown_decoration.dart';
 
 class InputDropdown<T> extends StatelessWidget {
   const InputDropdown({
@@ -14,6 +15,7 @@ class InputDropdown<T> extends StatelessWidget {
     required this.onSendItem,
     required this.onSubmitInput,
     required this.items,
+    required this.inputBoxDecoration,
     this.maxLines = 1,
     this.iconPosition = IconPosition.end,
     this.executeFunction = IconFunction.tapIcon,
@@ -37,6 +39,7 @@ class InputDropdown<T> extends StatelessWidget {
   final Function(T) onSendItem;
   final Function(String) onSubmitInput;
   final double dropdownOffset;
+  final DropdownDecoration inputBoxDecoration;
   final String? textHint;
   final TextStyle? textStyle;
   final EdgeInsets insetPadding;
@@ -57,59 +60,71 @@ class InputDropdown<T> extends StatelessWidget {
 
     return CompositedTransformTarget(
       link: layerLink,
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: TextField(
-              maxLines: maxLines,
-              style: textStyle,
-              inputFormatters: inputFormatter,
-              controller: inputController..text,
-              onSubmitted: (value) => onSubmitInput(value),
-              decoration: InputDecoration(
-                isDense: true,
-                contentPadding: iconPosition.isStart
-                    ? insetPadding.add(
-                        EdgeInsets.only(
-                          left: showDropdownButton.size ??
-                              _inputPaddingLeftOnIconStart,
-                        ),
-                      )
-                    : insetPadding,
-                hintText: textHint,
-                hintStyle: textStyle,
-                labelStyle: textStyle,
-                border: InputBorder.none,
-              ),
+      child: ClipPath(
+        clipper: inputBoxDecoration.clipper,
+        child: Container(
+          padding: EdgeInsets.all(inputBoxDecoration.borderWidth),
+          color: inputBoxDecoration.backgroundColor,
+          child: CustomPaint(
+            painter: inputBoxDecoration.painterForInputDecoration,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: TextField(
+                    maxLines: maxLines,
+                    style: textStyle,
+                    inputFormatters: inputFormatter,
+                    controller: inputController..text,
+                    onSubmitted: (value) => onSubmitInput(value),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      contentPadding: iconPosition.isStart
+                          ? insetPadding.add(
+                              EdgeInsets.only(
+                                left: showDropdownButton.size ??
+                                    _inputPaddingLeftOnIconStart,
+                              ),
+                            )
+                          : insetPadding,
+                      hintText: textHint,
+                      hintStyle: textStyle,
+                      labelStyle: textStyle,
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: iconPosition.isStart
+                      ? Alignment.centerLeft
+                      : Alignment.centerRight,
+                  child: DropdownIcon(
+                    icon: showDropdownButton,
+                    mouseCursor: mouseCursor,
+                    onFunction: (isExpanded) => overlayEntry = _showOverlay(
+                      context: context,
+                      layerLink: layerLink,
+                      overlayEntry: overlayEntry,
+                      overlayState: overlayState,
+                      show: isExpanded,
+                      dropdownDecoration: inputBoxDecoration,
+                      onTapItem: (index) {
+                        final item = items[index];
+                        inputController.text = item.toString();
+                        onSendItem(item);
+                        overlayEntry?.remove();
+                      },
+                      onMouseLeaveList: () => executeFunction.isHover
+                          ? overlayEntry?.remove()
+                          : null,
+                    ),
+                    functionTrigger: executeFunction.dropdownButtonIconTrigger,
+                  ),
+                ),
+              ],
             ),
           ),
-          Align(
-            alignment: iconPosition.isStart
-                ? Alignment.centerLeft
-                : Alignment.centerRight,
-            child: DropdownIcon(
-              icon: showDropdownButton,
-              mouseCursor: mouseCursor,
-              onFunction: (isExpanded) => overlayEntry = _showOverlay(
-                context: context,
-                layerLink: layerLink,
-                overlayEntry: overlayEntry,
-                overlayState: overlayState,
-                show: isExpanded,
-                onTapItem: (index) {
-                  final item = items[index];
-                  inputController.text = item.toString();
-                  onSendItem(item);
-                  overlayEntry?.remove();
-                },
-                onMouseLeaveList: () =>
-                    executeFunction.isHover ? overlayEntry?.remove() : null,
-              ),
-              functionTrigger: executeFunction.dropdownButtonIconTrigger,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -122,6 +137,7 @@ class InputDropdown<T> extends StatelessWidget {
     required bool show,
     required Function(int) onTapItem,
     required VoidCallback onMouseLeaveList,
+    required DropdownDecoration dropdownDecoration,
   }) {
     if (show && overlayState != null) {
       final newOverlayEntry = DropdownOverlay<T>().create(
@@ -130,6 +146,7 @@ class InputDropdown<T> extends StatelessWidget {
         items: items,
         itemTextStyle: textStyle,
         itemPadding: insetPadding,
+        dropdownDecoration: dropdownDecoration,
         onSelectItem: (index) {
           onTapItem(index);
         },

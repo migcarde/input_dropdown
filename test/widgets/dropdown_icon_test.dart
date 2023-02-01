@@ -50,8 +50,6 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    // TODO: Add SystemMouseCursors detector
-
     // Expect
     expect(iconFinder, findsOneWidget);
     expect(iconContentFinder, findsOneWidget);
@@ -86,8 +84,6 @@ void main() {
     // Tap on icon again
     await tester.tap(iconFinder);
     await tester.pumpAndSettle();
-
-    // TODO: Add SystemMouseCursors detector
 
     // Expect
     expect(iconFinder, findsOneWidget);

@@ -47,8 +47,6 @@ void main() {
     await gesture.moveTo(tester.getCenter(textWidgetFinder));
     await tester.pump();
 
-    // TODO: Add mouse cursor test
-
     // Expect
     expect(textFinder, findsOneWidget);
     expect(textWidgetFinder, findsOneWidget);
