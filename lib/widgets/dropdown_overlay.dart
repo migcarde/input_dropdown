@@ -28,29 +28,37 @@ class DropdownOverlay<T> {
           child: CompositedTransformFollower(
             link: layerLink,
             showWhenUnlinked: false,
-            offset:
-                Offset(Dimens.zeroValue, dropdownInput.size.height + offset),
+            offset: Offset(
+              Dimens.zeroValue,
+              dropdownInput.size.height +
+                  offset -
+                  dropdownDecoration.borderWidth,
+            ),
             child: Padding(
-              padding: EdgeInsets.all(dropdownDecoration.borderWidth),
+              padding: EdgeInsets.symmetric(
+                  horizontal: dropdownDecoration.borderWidth),
               child: CustomPaint(
                 painter: dropdownDecoration.painterForDropdownDecoration,
-                child: MouseRegion(
-                  onExit: (event) => onMouseLeaveList(),
-                  child: ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (listContext, index) => HoverableItem(
-                      child: (isHovered) => GestureDetector(
-                        onTap: () => onSelectItem(index),
-                        child: Container(
-                          decoration: isHovered
-                              ? itemHoveredDecoration
-                              : itemDecoration,
-                          child: Padding(
-                            padding: itemPadding ??
-                                const EdgeInsets.all(Dimens.zeroValue),
-                            child: Text(
-                              items[index].toString(),
-                              style: itemTextStyle,
+                child: ClipPath(
+                  clipper: dropdownDecoration.clipperForDropdown,
+                  child: MouseRegion(
+                    onExit: (event) => onMouseLeaveList(),
+                    child: ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (listContext, index) => HoverableItem(
+                        child: (isHovered) => GestureDetector(
+                          onTap: () => onSelectItem(index),
+                          child: Container(
+                            decoration: isHovered
+                                ? itemHoveredDecoration
+                                : itemDecoration,
+                            child: Padding(
+                              padding: itemPadding ??
+                                  const EdgeInsets.all(Dimens.zeroValue),
+                              child: Text(
+                                items[index].toString(),
+                                style: itemTextStyle,
+                              ),
                             ),
                           ),
                         ),

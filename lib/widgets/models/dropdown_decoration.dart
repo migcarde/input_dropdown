@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:input_dropdown/common/clippers/circular_clipper.dart';
+import 'package:input_dropdown/common/clippers/dropdown_circular_clipper.dart';
 import 'package:input_dropdown/common/painters/circular_painter.dart';
 import 'package:input_dropdown/common/painters/circular_painter_dropdown.dart';
 import 'package:input_dropdown/common/painters/empty_painter.dart';
@@ -22,7 +23,7 @@ class DropdownDecoration {
   final double borderRadius;
   final Color borderColor;
   final Color backgroundColor;
-  final bool hasBorderBottom;
+  final bool hasBorderBottomOnExpand;
   final CustomPainter? painter;
 
   static const _zeroValue = 0.0;
@@ -33,7 +34,7 @@ class DropdownDecoration {
     this.borderRadius = _zeroValue,
     this.borderColor = Colors.black,
     this.backgroundColor = Colors.transparent,
-    this.hasBorderBottom = false,
+    this.hasBorderBottomOnExpand = false,
     this.painter,
   });
 
@@ -50,7 +51,7 @@ class DropdownDecoration {
         borderWidth: borderWidth ?? _zeroValue,
         borderColor: borderColor ?? Colors.black,
         backgroundColor: backgroundColor ?? Colors.transparent,
-        hasBorderBottom: hasBorderBottom ?? false,
+        hasBorderBottomOnExpand: hasBorderBottom ?? false,
       );
 
   factory DropdownDecoration.circular({
@@ -58,7 +59,7 @@ class DropdownDecoration {
     double? borderRadius,
     Color? borderColor,
     Color? backgroundColor,
-    bool? hasBorderBottom,
+    bool? hasBorderBottomOnExpand,
   }) =>
       DropdownDecoration(
         type: DropdownDecorationType.circular,
@@ -66,7 +67,7 @@ class DropdownDecoration {
         borderRadius: borderRadius ?? _zeroValue,
         borderColor: borderColor ?? Colors.black,
         backgroundColor: backgroundColor ?? Colors.transparent,
-        hasBorderBottom: hasBorderBottom ?? false,
+        hasBorderBottomOnExpand: hasBorderBottomOnExpand ?? false,
       );
 
   factory DropdownDecoration.custom({
@@ -87,7 +88,7 @@ extension DropdownDecorationExtensions on DropdownDecoration {
         return RectangularPainter(
           borderWidth: borderWidth,
           borderColor: borderColor,
-          hasBorderBottom: hasBorderBottom,
+          hasBorderBottom: hasBorderBottomOnExpand,
           hasBorderTop: true,
         );
       case DropdownDecorationType.circular:
@@ -95,8 +96,6 @@ extension DropdownDecorationExtensions on DropdownDecoration {
           borderWidth: borderWidth,
           borderRadius: borderRadius,
           borderColor: borderColor,
-          hasBorderBottom: hasBorderBottom,
-          hasBorderTop: true,
         );
       case DropdownDecorationType.custom:
         return painter ?? EmptyPainter();
@@ -111,7 +110,7 @@ extension DropdownDecorationExtensions on DropdownDecoration {
         return RectangularPainter(
           borderWidth: borderWidth,
           borderColor: borderColor,
-          hasBorderBottom: hasBorderBottom,
+          hasBorderBottom: hasBorderBottomOnExpand,
           hasBorderTop: true,
         );
       case DropdownDecorationType.circular:
@@ -120,16 +119,24 @@ extension DropdownDecorationExtensions on DropdownDecoration {
           borderRadius: borderRadius,
           borderColor: borderColor,
           backgroundColor: backgroundColor,
-          hasBorderTop: false,
+          hasBorderTop: hasBorderBottomOnExpand,
         );
       case DropdownDecorationType.custom:
         return painter ?? EmptyPainter();
     }
   }
 
-  CustomClipper<Path>? get clipper {
+  CustomClipper<Path>? get clipperForInputDecoration {
     if (type.isCircular) {
       return CircularClipper(borderRadius: borderRadius);
+    } else {
+      return null;
+    }
+  }
+
+  CustomClipper<Path>? get clipperForDropdown {
+    if (type.isCircular) {
+      return DropdownCircularClipper(borderRadius: borderRadius);
     } else {
       return null;
     }

@@ -61,7 +61,7 @@ class InputDropdown<T> extends StatelessWidget {
     return CompositedTransformTarget(
       link: layerLink,
       child: ClipPath(
-        clipper: inputBoxDecoration.clipper,
+        clipper: inputBoxDecoration.clipperForInputDecoration,
         child: Container(
           padding: EdgeInsets.all(inputBoxDecoration.borderWidth),
           color: inputBoxDecoration.backgroundColor,
